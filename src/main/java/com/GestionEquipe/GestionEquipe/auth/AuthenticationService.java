@@ -1,20 +1,23 @@
 package com.GestionEquipe.GestionEquipe.auth;
 
-import com.GestionEquipe.GestionEquipe.Config.JwtService;
-import com.GestionEquipe.GestionEquipe.Repository.ChefProjetRepository;
-import com.GestionEquipe.GestionEquipe.Repository.MembreEquipeRepository;
-import com.GestionEquipe.GestionEquipe.Repository.UtilisateurRepository;
-import com.GestionEquipe.GestionEquipe.model.ChefProjet;
-import com.GestionEquipe.GestionEquipe.model.MembreEquipe;
-import com.GestionEquipe.GestionEquipe.model.Role;
-import com.GestionEquipe.GestionEquipe.model.Utilisateur;
-import lombok.RequiredArgsConstructor;
+import java.util.Optional;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import com.GestionEquipe.GestionEquipe.Config.JwtService;
+import com.GestionEquipe.GestionEquipe.Repository.ChefProjetRepository;
+import com.GestionEquipe.GestionEquipe.Repository.MembreEquipeRepository;
+import com.GestionEquipe.GestionEquipe.Repository.UtilisateurRepository;
+import com.GestionEquipe.GestionEquipe.Services.IUtilisateurService;
+import com.GestionEquipe.GestionEquipe.model.ChefProjet;
+import com.GestionEquipe.GestionEquipe.model.MembreEquipe;
+import com.GestionEquipe.GestionEquipe.model.Role;
+import com.GestionEquipe.GestionEquipe.model.Utilisateur;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final IUtilisateurService userService;
 
     public AuthenticationResponse register(RegisterRequest request) {
 
@@ -97,6 +101,17 @@ public class AuthenticationService {
                 .role(user.getRole())
                 .build();
     }
+
+	public String changePassword(ChangePasswordRequest request) {
+		Utilisateur user = userService.getCurrentUser();
+		boolean isTheOldPasswordIsCorrect = passwordEncoder.matches(request.getOldPassword(), user.getPassword());
+		if(!isTheOldPasswordIsCorrect) {
+			return "WRONG_PASSWORD";
+		}
+		user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+		userService.saveUserInDataBase(user);
+		return "OK";
+	}
 
 
 }

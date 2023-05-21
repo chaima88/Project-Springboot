@@ -96,4 +96,10 @@ public class UtilisateurService implements IUtilisateurService {
 		Integer currentuserId = SecurityUtil.getCurrentUserId();
 		return getUserById(currentuserId);
 	}
+
+	@Override
+	public void saveUserInDataBase(Utilisateur utilisateur) {
+		utilisateurRepository.save(utilisateur);
+		
+	}
 }

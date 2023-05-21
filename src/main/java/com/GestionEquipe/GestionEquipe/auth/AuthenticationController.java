@@ -1,6 +1,9 @@
 package com.GestionEquipe.GestionEquipe.auth;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +31,14 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.authenticate(request));
     }
 
-
-
+	@PostMapping("/change-password")
+	public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest request) {
+		String result = service.changePassword(request);
+		if(result.equals("WRONG_PASSWORD")) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
+		return ResponseEntity.ok().build();
+		
+	}
 
 }

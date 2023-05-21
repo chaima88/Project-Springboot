@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface IUtilisateurService {
     public Utilisateur saveUser(Utilisateur utilisateur);
+    public void saveUserInDataBase(Utilisateur utilisateur);
     public Utilisateur updateUser(Utilisateur utilisateur, Integer id);
     // Read operation
      public List<Utilisateur> fetchUserList();
